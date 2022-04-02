@@ -18,6 +18,7 @@ function AdminCategoryList() {
         alert('something went wrong')
       })
   }, [])
+  const navigate = useNavigate()
   return (
     <div>
       Category:
@@ -32,7 +33,7 @@ function AdminCategoryList() {
           </Link>
         </div>
       ))}
-      <button>Go Back</button>
+      <button onClick={() => navigate(-1)}>Go Back</button>
     </div>
   )
 }

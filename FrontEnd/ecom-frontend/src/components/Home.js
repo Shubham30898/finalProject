@@ -7,8 +7,8 @@ function Home() {
   return (
     <div>
       <Navbar></Navbar>
-      <ProductList></ProductList>
       <CategoryList></CategoryList>
+      <ProductList></ProductList>
     </div>
   )
 }

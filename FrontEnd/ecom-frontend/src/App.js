@@ -18,6 +18,7 @@ import Nomatch from './components/Nomatch'
 import AdminProductList from './components/AdminProductList'
 import AdminCategoryList from './components/AdminCategoryList'
 import UpdateCategory from './components/UpdateCategory'
+import ProductDetails from './components/ProductDetails'
 
 function App() {
   return (
@@ -55,6 +56,10 @@ function App() {
       <Route
         path="/admin/category/updatecategory/:id"
         element={<UpdateCategory />}
+      ></Route>
+      <Route
+        path="/product/productdetails/:id"
+        element={<ProductDetails />}
       ></Route>
     </Routes>
   )
