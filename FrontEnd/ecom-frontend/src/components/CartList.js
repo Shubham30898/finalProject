@@ -21,31 +21,19 @@ function CartList() {
       })
   }, [])
 
+  function deleteHandler(id) {
+    let token = sessionStorage.getItem('token')
+    axios.delete(`http://localhost:8080/cart/delete/${id}?token=${token}`)
+    console.log(id)
+    window.location.reload()
+  }
+
   console.log(data)
   console.log(totalamount.totalCost)
   const navigate = useNavigate()
   return (
     <div>
       CartList:
-      {/* {data.cartItems.map((info) => {
-        return (
-          <div>
-            <p>{info.id}</p>
-
-            <p> Qunatity is: {info.quantity}</p>
-            {info.product.map((sub) => {
-              return (
-                <div>
-                  <p>sub.name</p>
-                  <img src={sub.imageURL} alt="product"></img>
-                  <p>{sub.price}</p>
-                </div>
-              )
-            })}
-          </div>
-        )
-      })}
-      <p>Total Amount: {data.totalCost}</p> */}
       <div>
         {data.map((info) => (
           <div>
@@ -54,6 +42,7 @@ function CartList() {
             <p>Description:{info.product.description}</p>
             <p>Qunatity:{info.quantity}</p>
             <p>Price:{info.product.price}</p>
+            <button onClick={() => deleteHandler(info.id)}>Delete item</button>
           </div>
         ))}
       </div>
