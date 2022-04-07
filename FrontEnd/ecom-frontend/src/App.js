@@ -19,6 +19,7 @@ import AdminProductList from './components/AdminProductList'
 import AdminCategoryList from './components/AdminCategoryList'
 import UpdateCategory from './components/UpdateCategory'
 import ProductDetails from './components/ProductDetails'
+import ShowProductInCategory from './components/ShowProductInCategory'
 
 function App() {
   return (
@@ -60,6 +61,11 @@ function App() {
       <Route
         path="/product/productdetails/:id"
         element={<ProductDetails />}
+      ></Route>
+
+      <Route
+        path="category/product/:id"
+        element={<ShowProductInCategory />}
       ></Route>
     </Routes>
   )
