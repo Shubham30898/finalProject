@@ -19,6 +19,7 @@ public class AddressService {
 	public void createAddress(Address address, User user) {
 		 
 		Address address2 = new Address();
+		
 		address2.setUser(user);
 		address2.setAddressLine1(address.getAddressLine1());
 		address2.setCity(address.getCity());

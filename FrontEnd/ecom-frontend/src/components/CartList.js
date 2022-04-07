@@ -7,10 +7,9 @@ function CartList() {
   const [data, setData] = useState([])
   const [totalamount, setTotalAmount] = useState([])
   useEffect(() => {
+    let token = sessionStorage.getItem('token')
     axios
-      .get(
-        'http://localhost:8080/cart/?token=814f6289-d38a-4867-8cac-f1700df85457',
-      )
+      .get(`http://localhost:8080/cart/?token=${token}`)
       .then((res) => {
         setData(res.data.cartItems)
         setTotalAmount(res.data)
@@ -30,6 +29,7 @@ function CartList() {
 
   console.log(data)
   console.log(totalamount.totalCost)
+  sessionStorage.setItem('total', `${totalamount.totalCost}`)
   const navigate = useNavigate()
   return (
     <div>
