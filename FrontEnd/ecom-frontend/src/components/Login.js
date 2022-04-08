@@ -1,28 +1,31 @@
 import React from 'react'
-import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Fragment } from 'react/cjs/react.production.min'
+import * as yup from 'yup'
 
 function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  console.log({ email, password })
-
-  const handleEmail = (e) => {
-    setEmail(e.target.value)
+  const defaultValue = {
+    email: '',
+    password: '',
   }
 
-  const handlePassword = (e) => {
-    setPassword(e.target.value)
-  }
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .required('Please enter your email')
+      .email('please enter valid email'),
+    password: yup.string().required('please enter your password'),
+  })
 
   const navigate = useNavigate()
-  const handleApi = () => {
+  const handleSubmit = (values) => {
+    console.log(values.email)
     axios
       .post('http://localhost:8080/user/signin', {
-        email: email,
-        password: password,
+        email: values.email,
+        password: values.password,
       })
       .then((res) => {
         console.log(res.data)
@@ -52,16 +55,56 @@ function Login() {
   }
 
   return (
-    <div>
-      Email Id:
-      <input value={email} onChange={handleEmail} type="email" />
-      <br></br>
-      Password:
-      <input value={password} onChange={handlePassword} type="password" />
-      <br></br>
-      <button onClick={handleApi}>Login</button>
-      <button onClick={() => navigate('/signup')}>Sign Up</button>
-    </div>
+    <Fragment>
+      <div className="container ">
+        <div className="col-md-8 text-center mt-5 border border-2 border-primary rounded">
+          <h1 className="pt-2">Log In</h1>
+
+          <Formik
+            initialValues={defaultValue}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values }) => (
+              <Form>
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="email"
+                    placeholder="Enter Your Email"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="email" />
+                  </p>
+                </div>
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="password"
+                    placeholder="Enter Your password"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="password" />
+                  </p>
+                </div>
+                <button className="btn btn-primary mx-5 mb-1" type="submit">
+                  Submit
+                </button>
+
+                <button
+                  className="btn btn-primary mx-5 mb-1"
+                  onClick={() => navigate('/signup')}
+                >
+                  Sign Up
+                </button>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </Fragment>
   )
 }
 

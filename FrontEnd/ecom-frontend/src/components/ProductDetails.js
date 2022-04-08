@@ -2,6 +2,9 @@ import axios from 'axios'
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Fragment } from 'react/cjs/react.production.min'
+import * as yup from 'yup'
 
 function ProductDetails() {
   const navigate = useNavigate()
@@ -12,7 +15,6 @@ function ProductDetails() {
   const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
   const [categoryId, setCategoryId] = useState('')
-  const [quantity, setQunatity] = useState('')
 
   console.log({ productname, imageurl, price, description })
 
@@ -33,17 +35,29 @@ function ProductDetails() {
     setCategoryId(result[0].categoryId)
   }
 
-  const handleQuantity = (e) => {
-    setQunatity(e.target.value)
+  const defaultValue = {
+    quantity: '',
   }
 
-  const handleApi = () => {
+  const validationSchema = yup.object().shape({
+    quantity: yup
+      .number()
+      .required('Please Enter Quantity')
+      .test(
+        'Is positive?',
+        'ERROR: The quantity must be greater than 0!',
+        (value) => value > 0,
+      ),
+  })
+
+  const handleOnSubmit = (values) => {
+    console.log('values', values)
     const token = sessionStorage.getItem('token')
     if (token) {
       axios
         .post(`http://localhost:8080/cart/add?token=${token}`, {
           productId: id,
-          quantity: quantity,
+          quantity: values.quantity,
         })
         .then((res) => {
           alert(res.data.message)
@@ -75,9 +89,29 @@ function ProductDetails() {
       <p>{price}</p>
       <br></br>
       quantity:
-      <input value={quantity} onChange={handleQuantity} type="number" />
-      <br></br>
-      <button onClick={handleApi}>Add to cart</button>
+      <Fragment>
+        <Formik
+          initialValues={defaultValue}
+          validationSchema={validationSchema}
+          onSubmit={handleOnSubmit}
+        >
+          <Form>
+            <div>
+              <Field
+                type="number"
+                name="quantity"
+                placeholder="Enter Quntity"
+              />
+              <p className="text-danger">
+                <ErrorMessage name="quantity" />
+              </p>
+            </div>
+            <button className="btn btn-primary mx-5 mb-1" type="submit">
+              Add to cart
+            </button>
+          </Form>
+        </Formik>
+      </Fragment>
       <br></br>
       <button onClick={handleCart}>Show Cart</button>
       <br></br>

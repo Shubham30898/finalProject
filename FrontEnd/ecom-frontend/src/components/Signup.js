@@ -1,42 +1,41 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Fragment } from 'react/cjs/react.production.min'
+import * as yup from 'yup'
 
 function Signup() {
-  const [firstname, setfirstName] = useState('')
-  const [lastname, setLasttName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  console.log({ email, password, firstname, lastname })
-
-  const handleEmail = (e) => {
-    setEmail(e.target.value)
+  const defaultValue = {
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
   }
 
-  const handleFirstName = (e) => {
-    setfirstName(e.target.value)
-  }
-
-  const handleLastName = (e) => {
-    setLasttName(e.target.value)
-  }
-
-  const handlePassword = (e) => {
-    setPassword(e.target.value)
-  }
+  const validationSchema = yup.object().shape({
+    firstname: yup.string().required('Please enter your firstname'),
+    lastname: yup.string().required('Please enter your lastname'),
+    email: yup
+      .string()
+      .required('Please enter your email')
+      .email('please enter valid email'),
+    password: yup.string().required('please enter your password'),
+  })
 
   const navigate = useNavigate()
-  const handleApi = () => {
+  const handleSubmit = (values) => {
+    console.log('values', values)
     axios
       .post('http://localhost:8080/user/signup', {
-        firstName: firstname,
-        lastName: lastname,
-        email: email,
-        password: password,
+        firstName: values.firstname,
+        lastName: values.lastname,
+        email: values.email,
+        password: values.password,
       })
       .then((result) => {
         console.log(result)
+        alert('Registerd Successfully')
         navigate('/login')
       })
       .catch((error) => {
@@ -45,23 +44,80 @@ function Signup() {
   }
 
   return (
-    <div>
-      First Name:
-      <input value={firstname} onChange={handleFirstName} type="text" />
-      <br></br>
-      Last Name:
-      <input value={lastname} onChange={handleLastName} type="text" />
-      <br></br>
-      Email Id:
-      <input value={email} onChange={handleEmail} type="email" />
-      <br></br>
-      Password:
-      <input value={password} onChange={handlePassword} type="password" />
-      <br></br>
-      <button onClick={handleApi}>Register</button>
-      <p> Already Register</p>
-      <button onClick={() => navigate('/login')}>Login</button>
-    </div>
+    <Fragment>
+      <div className="container ">
+        <div className="col-md-8 text-center mt-5 border border-2 border-primary rounded">
+          <h1 className="pt-2">Log In</h1>
+
+          <Formik
+            initialValues={defaultValue}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values }) => (
+              <Form>
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="firstname"
+                    placeholder="Enter Your First Name"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="firstname" />
+                  </p>
+                </div>
+
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="lastname"
+                    placeholder="Enter Your Last Name"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="lastname" />
+                  </p>
+                </div>
+
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="email"
+                    placeholder="Enter Your Email"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="email" />
+                  </p>
+                </div>
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="password"
+                    placeholder="Enter Your password"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="password" />
+                  </p>
+                </div>
+                <button className="btn btn-primary mx-5 mb-1" type="submit">
+                  Register
+                </button>
+
+                <button
+                  className="btn btn-primary mx-5 mb-1"
+                  onClick={() => navigate('/login')}
+                >
+                  Log In
+                </button>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </Fragment>
   )
 }
 

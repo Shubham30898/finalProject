@@ -66,11 +66,15 @@ function Payment() {
             'AQ41R_Q4w53ojAQX_YcFuhdus1yuU2JQSBOolJgHMaMkF06pb82_o5V_9bUsb8lpblNvZ8MHRnhs87OQ',
         }}
       >
-        <h1>Total Amount</h1>
+        <h1>Total Amount:</h1>
 
-        <span>{JSON.parse(sessionStorage.getItem('total'))}</span>
-        <br></br>
-        <button onClick={() => setShow(true)} type="submit">
+        <h3>{JSON.parse(sessionStorage.getItem('total'))} USD</h3>
+
+        <button
+          className="btn btn-primary mx-5 mb-1"
+          onClick={() => setShow(true)}
+          type="submit"
+        >
           Buy Now
         </button>
 

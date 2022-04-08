@@ -1,43 +1,44 @@
 import axios from 'axios'
 import React from 'react'
-import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Fragment } from 'react/cjs/react.production.min'
+import * as yup from 'yup'
 
 function CreateProducts() {
   const navigate = useNavigate()
   const params = useParams()
   const id = params.id
 
-  const [productname, setProductName] = useState('')
-  const [imageurl, setImageUrl] = useState('')
-  const [price, setPrice] = useState('')
-  const [description, setDescription] = useState('')
-
-  console.log({ productname, imageurl, price, description })
-
-  const handleProductName = (e) => {
-    setProductName(e.target.value)
+  const defaultValue = {
+    productname: '',
+    imageurl: '',
+    price: '',
+    description: '',
   }
 
-  const handleImageUrl = (e) => {
-    setImageUrl(e.target.value)
-  }
+  const validationSchema = yup.object().shape({
+    productname: yup.string().required('Please enter product name'),
+    imageurl: yup.string().required('Please enter image URL'),
+    price: yup
+      .number()
+      .required('Please enter product price')
+      .test(
+        'Is positive?',
+        'ERROR: The price must be greater than 0!',
+        (value) => value > 0,
+      ),
+    description: yup.string().required('please enter product description'),
+  })
 
-  const handlePrice = (e) => {
-    setPrice(e.target.value)
-  }
-
-  const handleDescription = (e) => {
-    setDescription(e.target.value)
-  }
-
-  const handleApi = () => {
+  const handleSubmit = (values) => {
+    console.log('values', values)
     axios
       .post('http://localhost:8080/product/add', {
-        name: productname,
-        imageURL: imageurl,
-        price: price,
-        description: description,
+        name: values.productname,
+        imageURL: values.imageurl,
+        price: values.price,
+        description: values.description,
         categoryId: id,
       })
       .then((res) => {
@@ -50,23 +51,80 @@ function CreateProducts() {
   }
 
   return (
-    <>
-      <h1>Add products in selected category</h1>
-      Product Name:
-      <input value={productname} onChange={handleProductName} type="text" />
-      <br></br>
-      Image URl:
-      <input value={imageurl} onChange={handleImageUrl} type="text" />
-      <br></br>
-      Price:
-      <input value={price} onChange={handlePrice} type="text" />
-      <br></br>
-      Description:
-      <input value={description} onChange={handleDescription} type="text" />
-      <br></br>
-      <button onClick={handleApi}>Register</button>
-      <button onClick={() => navigate(-1)}>Go back</button>
-    </>
+    <Fragment>
+      <div className="container ">
+        <div className="col-md-8 text-center mt-5 border border-2 border-primary rounded">
+          <h1 className="pt-2">Add New Product</h1>
+
+          <Formik
+            initialValues={defaultValue}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values }) => (
+              <Form>
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="productname"
+                    placeholder="Please enter category name"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="productname" />
+                  </p>
+                </div>
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="imageurl"
+                    placeholder="Please enter image URL"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="imageurl" />
+                  </p>
+                </div>
+
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="number"
+                    name="price"
+                    placeholder="please enter category description"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="price" />
+                  </p>
+                </div>
+
+                <div className="col-md-12 mt-4 px-3 pt-1">
+                  <Field
+                    type="text"
+                    name="description"
+                    placeholder="please enter category description"
+                    className="form-control border border-1 border-dark"
+                  />
+                  <p className="text-danger">
+                    <ErrorMessage name="description" />
+                  </p>
+                </div>
+
+                <button className="btn btn-primary mx-5 mb-1" type="submit">
+                  Add Product
+                </button>
+              </Form>
+            )}
+          </Formik>
+          <button
+            className="btn btn-primary mx-5 mb-1"
+            onClick={() => navigate(-1)}
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    </Fragment>
   )
 }
 
